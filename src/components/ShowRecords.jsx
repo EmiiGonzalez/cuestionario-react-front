@@ -25,7 +25,7 @@ export const ShowRecords = ({url}) => {
         <div className="">
             <table className="">
               <CustomThead/>
-              <CustomTbody rows={records}/>
+              <CustomTbody rows={records} getRecords={getRecords} url={url}/>
             </table>
         </div>
       </div>

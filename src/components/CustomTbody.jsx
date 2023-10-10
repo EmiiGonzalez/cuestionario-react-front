@@ -1,9 +1,19 @@
-export const CustomTbody = ({rows}) => {
-  console.log(rows);
+import axios from "axios";
+import { Link } from "react-router-dom";
+
+export const CustomTbody = ({rows, getRecords, url}) => {
+
+  const deleteRecord = async (id) => {
+    const res = await axios.delete(
+        `${url}rFormWeb/delete/${id}`
+    );
+    getRecords();
+  }
+
   return (
     <tbody>
       {rows.map((row) => (
-        <tr key={row.id}>
+        <tr key={row.cuestn}>
           <td>{row.cuestn}</td>
           <td>{row.edad}</td>
           <td>{row.sexo}</td>
@@ -32,6 +42,8 @@ export const CustomTbody = ({rows}) => {
           <td>{row.p11_o}</td>
           <td>{row.p12_o}</td>
           <td>{row.p14_o}</td>
+          <td><Link to={`/rFormWeb/edit/${row.cuestn}`}>Editar</Link></td>
+          <td><button onClick={() => deleteRecord(row.cuestn)}>Eliminar</button></td>
         </tr>
       ))}
     </tbody>
