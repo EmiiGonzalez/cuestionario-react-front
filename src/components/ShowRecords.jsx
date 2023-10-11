@@ -3,32 +3,24 @@ import { useState, useEffect } from "react";
 import { CustomThead } from "./CustomThead";
 import { CustomTbody } from "./CustomTbody";
 
+export const ShowRecords = ({ url }) => {
+  const [records, setRecords] = useState([]);
 
-export const ShowRecords = ({url}) => {
-    const [records, setRecords] = useState([]);
+  const getRecords = async () => {
+    const res = await axios.get(`${url}rFormWeb`);
+    setRecords(res.data);
+  };
 
-    const getRecords = async () => {
-        const res = await axios.get(
-            `${url}rFormWeb`
-        );
-        setRecords(res.data);
-    }
-
-    useEffect(() => {
-        getRecords();
-    }, []);
-
+  useEffect(() => {
+    getRecords();
+  }, []);
 
   return (
-    <div className="">
-      <div className="">
-        <div className="">
-            <table className="">
-              <CustomThead/>
-              <CustomTbody rows={records} getRecords={getRecords} url={url}/>
-            </table>
-        </div>
-      </div>
+    <div className="table-responsive">
+      <table className="table table-striped table-sm">
+        <CustomThead />
+        <CustomTbody rows={records} getRecords={getRecords} url={url} />
+      </table>
     </div>
   );
 };

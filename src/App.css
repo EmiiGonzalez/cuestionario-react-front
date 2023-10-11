@@ -1,0 +1,25 @@
+.ajs-button {
+    border-radius: 10px ;
+    border: none;
+    transition: transform .2s;
+  }
+.ajs-button:hover{
+    transform: scale(1.05);
+}
+
+.ajs-ok{
+    background-color: rgb(46, 214, 46);
+    color: white;
+    font-weight: bold;
+}
+.ajs-cancel{
+    background-color: rgb(255, 58, 58);
+    color: white;
+    font-weight: bold;
+}
+.ajs-ok:hover{
+    background-color: rgb(0, 255, 0);
+}
+.ajs-cancel:hover{
+    background-color: rgb(255, 0, 0);
+}

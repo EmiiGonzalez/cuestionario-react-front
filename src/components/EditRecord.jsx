@@ -1,8 +1,7 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import '../styles/editRecords/editarCampos.css';
-
+import alertify from "alertifyjs";
 
 export const EditRecord = ({ url }) => {
   const [record, setRecord] = useState({
@@ -36,6 +35,7 @@ export const EditRecord = ({ url }) => {
     p14_o: "",
   });
   const { id } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     getRecordById();
@@ -44,6 +44,36 @@ export const EditRecord = ({ url }) => {
   const getRecordById = async () => {
     const res = await axios.get(`${url}rFormWeb/${id}`);
     setRecord(res.data);
+  };
+
+  const updateRecord = (e) => {
+    e.preventDefault();
+    alertify
+      .confirm(
+        "¿Confirmar Cambios?",
+        async () => {
+          try {
+            const response = await axios.put(
+              `${url}rFormWeb/edit/${id}`,
+              record
+            );
+            alertify.success("Se Actualizaron los Cambios");
+            navigate("/");
+          } catch (error) {
+            alertify.alert("Error ❗", "No se pudo Actualizar los Cambios");
+          }
+        },
+        () => {
+          alertify.error("Se cancelaron los Cambios");
+        }
+      )
+      .set("labels", {
+        ok: "Si",
+        cancel: "No",
+      })
+      .set("closable", true)
+      .set("movable", false)
+      .set("title", "");
   };
 
   const fieldNames = [
@@ -78,28 +108,28 @@ export const EditRecord = ({ url }) => {
   ];
 
   return (
-    <div className="form-container">
-      <form className="form">
-        <h1 className="text-center">Editar Registro</h1>
-        {fieldNames.map(({ label, type }) => (
-          <div className="form-group" key={label}>
-            <label className="form-label" htmlFor={label}>
-              {label}
-            </label>
-            <input
-              className="form-input"
-              id={label}
-              type={type}
-              value={record[label]}
-              onChange={(e) =>
-                setRecord({ ...record, [label]: e.target.value })
-              }
-            />
-          </div>
-        ))}
-        <button className="form-submit-btn" type="submit">Submit</button>
-
-      </form>
-    </div>
+    <form
+      className="form w-75 px-5 mx-auto mb-5 mt-2 bg-light border rounded"
+      onSubmit={updateRecord}
+    >
+      <h1 className="text-center mb-3 fw-bold">Editar Registro</h1>
+      {fieldNames.map(({ label, type }) => (
+        <div className="mb-3" key={label}>
+          <label className="form-label fw-bold fs-5" htmlFor={label}>
+            {label}
+          </label>
+          <input
+            className="form-control fs-5"
+            id={label}
+            type={type}
+            value={record[label]}
+            onChange={(e) => setRecord({ ...record, [label]: e.target.value })}
+          />
+        </div>
+      ))}
+      <button className="btn btn-primary w-100" type="submit">
+        Enviar
+      </button>
+    </form>
   );
 };

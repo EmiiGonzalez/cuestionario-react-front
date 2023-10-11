@@ -1,6 +1,9 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ShowRecords } from "./components/ShowRecords";
 import { EditRecord } from "./components/EditRecord";
+import './App.css';
+import 'alertifyjs/build/css/alertify.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 function App() {
   const URL = "http://localhost:3000/";
 

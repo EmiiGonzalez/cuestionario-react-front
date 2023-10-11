@@ -1,20 +1,41 @@
 import axios from "axios";
 import { Link } from "react-router-dom";
+import alertify from "alertifyjs";
 
 export const CustomTbody = ({rows, getRecords, url}) => {
 
-  const deleteRecord = async (id) => {
-    const res = await axios.delete(
-        `${url}rFormWeb/delete/${id}`
-    );
+  const deleteRecord = (id) => {
+    try {
+      alertify.confirm(
+        "¿Confirmar Eliminacion?",
+        async () => {
+          const response = await axios.delete(`${url}rFormWeb/delete/${id}`);
+          alertify.success(`Se Elimino el Registro ${id} correctamente ✔`);
+          getRecords();
+        },
+        () => {
+          alertify.error("Se Cancelo la Eliminacion");
+        }
+      )
+      .set("labels", {
+        ok: "Si",
+        cancel: "No",
+      })
+      .set("closable", true)
+      .set("movable", false)
+      .set("title", "");
+    } catch (error) {
+      alertify.alert("Error ❗", "No se pudo Eliminar el Registro");
+    }
     getRecords();
   }
 
+// Luego utiliza las variables desestructuradas directamente en el JSX
   return (
     <tbody>
       {rows.map((row) => (
         <tr key={row.cuestn}>
-          <td>{row.cuestn}</td>
+          <td scope="row">{row.cuestn}</td>
           <td>{row.edad}</td>
           <td>{row.sexo}</td>
           <td>{row.p1}</td>
@@ -33,17 +54,8 @@ export const CustomTbody = ({rows, getRecords, url}) => {
           <td>{row.p14}</td>
           <td>{row.p15}</td>
           <td>{row.p16}</td>
-          <td>{row.p17}</td>
-          <td>{row.p17_o}</td>
-          <td>{row.p4_o}</td>
-          <td>{row.p5_o}</td>
-          <td>{row.p6_o}</td>
-          <td>{row.p7_o}</td>
-          <td>{row.p11_o}</td>
-          <td>{row.p12_o}</td>
-          <td>{row.p14_o}</td>
-          <td><Link to={`/rFormWeb/edit/${row.cuestn}`}>Editar</Link></td>
-          <td><button onClick={() => deleteRecord(row.cuestn)}>Eliminar</button></td>
+          <td><Link to={`/rFormWeb/edit/${row.cuestn}`} className="btn btn-primary m-0 p-0 w-100">Editar</Link></td>
+          <td><button onClick={() => deleteRecord(row.cuestn)} className="btn btn-danger m-0 p-0 w-100">Eliminar</button></td>
         </tr>
       ))}
     </tbody>
