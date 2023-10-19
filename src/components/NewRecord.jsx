@@ -2,13 +2,20 @@ import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { validate, requerido, valOtro, multiples
-  , seRepite } from "./Helpers/validacion.js";
+import {
+  validate,
+  requerido,
+  valOtro,
+  multiples,
+  seRepite,
+  noIncluye,
+} from "./Helpers/validacion.js";
 import alertify from "alertifyjs";
 
 export const NewRecord = ({ url }) => {
   //hooks
   const [repite, setRepite] = useState({}); // Objeto para rastrear campos con errores "seRepite"
+  const [valorValido, setValorValido] = useState({});
   const [record, setRecord] = useState({
     edad: "",
     sexo: "",
@@ -46,14 +53,14 @@ export const NewRecord = ({ url }) => {
     p11_o: false,
     p12_o: false,
     p14_o: false,
-  })
+  });
   //fin hooks
-  
+
   const {
     register,
     formState: { errors },
     handleSubmit,
-    setError
+    setError,
   } = useForm();
 
   const navigate = useNavigate();
@@ -89,26 +96,65 @@ export const NewRecord = ({ url }) => {
   ];
 
   const saveRecord = async (e) => {
-    const conError = []
+    const conError = [];
+    const noValidos = [];
+
+    for (const key in valorValido) {
+      if (valorValido[key] === true) {
+        noValidos.push(key);
+      }
+    }
 
     multiples.forEach((field) => {
       if (repite[field]) {
-        conError.push(field)
+        conError.push(field);
       }
-    })
+    });
 
-    if (conError.length === 0) {
-      try {
-        const response = await axios.post(`${url}rFormWeb/create`, record);
-        alertify.success(`Se Agrego el Registro ${response.data.cuestn} ✔`);
-        navigate("/");
-      } catch (error) {
-        console.log(error);
-      }
+    const noHayError = conError.length === 0 && noValidos.length === 0;
+
+    if (noHayError) {
+      alertify
+        .confirm(
+          "¿Confirmar Cambios?",
+          async () => {
+            try {
+              await axios.post(
+                `${url}rFormWeb/create/`,
+                e
+              );
+              alertify.success("Se Actualizaron los Cambios");
+              navigate("/");
+            } catch (error) {
+              alertify.alert("Error ❗", "No se pudo Actualizar los Cambios");
+            }
+          },
+          () => {
+            alertify.error("Se cancelaron los Cambios");
+          }
+        )
+        .set("labels", {
+          ok: "Si",
+          cancel: "No",
+        })
+        .set("closable", true)
+        .set("movable", false)
+        .set("title", "");
     } else {
-      conError.forEach((field) => {
-        alertify.error(`No se puede agregar el registro debido a error en el campo ${field}`);
-      })
+      if (conError.length > 0) {
+        conError.forEach((field) => {
+          alertify.error(
+            `No se puede agregar el registro debido a error de dato repetido en el campo ${field}`
+          );
+        });
+      }
+      if (noValidos.length > 0) {
+        noValidos.forEach((field) => {
+          alertify.error(
+            `No se puede agregar el registro debido a un dato invalido en el campo ${field} `
+          );
+        });
+      }
     }
   };
 
@@ -124,7 +170,8 @@ export const NewRecord = ({ url }) => {
             {label}
           </label>
           <input
-            {...register(label, 
+            {...register(
+              label,
               requerido.includes(label)
                 ? {
                     required: validate[label].required,
@@ -138,7 +185,6 @@ export const NewRecord = ({ url }) => {
                     minLength: validate[label].minLength,
                     maxLength: validate[label].maxLength,
                   }
-                 
             )}
             className="form-control fs-5"
             id={label}
@@ -146,11 +192,40 @@ export const NewRecord = ({ url }) => {
             value={record[label]}
             onChange={(e) => {
               const newValue = e.target.value;
-              if (requerido.includes(label)){
-                newValue.toString().includes(valOtro[label]) ? setRegla({ ...regla, [`${label}_o`]: true }) : setRegla({ ...regla, [`${label}_o`]: false })
+              const comprobar =
+                label != "edad" &&
+                label != "p17_o" &&
+                label != "p4_o" &&
+                label != "p5_o" &&
+                label != "p6_o" &&
+                label != "p7_o" &&
+                label != "p11_o" &&
+                label != "p12_o" &&
+                label != "p14_o" &&
+                label != "p17";
+
+              //inicio de validaciones
+              if (requerido.includes(label)) {
+                newValue.toString().includes(valOtro[label])
+                  ? setRegla({ ...regla, [`${label}_o`]: true })
+                  : setRegla({ ...regla, [`${label}_o`]: false });
               }
 
-              if (multiples.includes(label)){
+              if (comprobar) {
+                const control = noIncluye(label, newValue);
+                if (control) {
+                  setError(label, {
+                    type: "valorInvalido",
+                    shouldFocus: true,
+                    message: `El valor ${newValue} no es una respuesta válida 👀`,
+                  });
+                  setValorValido({ ...valorValido, [label]: true });
+                } else {
+                  setValorValido({ ...valorValido, [label]: false });
+                }
+              }
+
+              if (multiples.includes(label)) {
                 const control = seRepite(newValue);
                 if (control) {
                   setError(label, { type: "seRepite", shouldFocus: true });
@@ -159,26 +234,45 @@ export const NewRecord = ({ url }) => {
                   setRepite({ ...repite, [label]: false });
                 }
               }
-              setRecord({ ...record, [label]: newValue })
+              //fin de validaciones
+
+              //seteo del valor
+              setRecord({ ...record, [label]: newValue });
             }}
+            onWheel={(e) => e.target.blur()}
           />
           {errors[label]?.type === "required" && (
             <span className="text-danger">El campo es requerido ❌</span>
           )}
           {errors[label]?.type === "minLength" && (
-            <span className="text-danger">Minimo {validate[label].minLength} caracteres ❗</span>
+            <span className="text-danger">
+              Minimo {validate[label].minLength} caracteres ❗
+            </span>
           )}
           {errors[label]?.type === "maxLength" && (
-            <span className="text-danger">Maximo {validate[label].maxLength} caracteres ❗</span>
+            <span className="text-danger">
+              Maximo {validate[label].maxLength} caracteres ❗
+            </span>
           )}
           {errors[label]?.type === "min" && (
-            <span className="text-danger">Debe ser mayor a {validate[label].min} y menor a {validate[label].max} ❗</span>
+            <span className="text-danger">
+              Debe ser mayor a {validate[label].min} y menor a{" "}
+              {validate[label].max} ❗
+            </span>
           )}
           {errors[label]?.type === "max" && (
-            <span className="text-danger">Debe ser menor a {validate[label].max} y mayor a {validate[label].min} ❗</span>
+            <span className="text-danger">
+              Debe ser menor a {validate[label].max} y mayor a{" "}
+              {validate[label].min} ❗
+            </span>
           )}
           {errors[label]?.type === "seRepite" && (
-            <span className="text-danger">No se pueden repetir los valores ❗</span>
+            <span className="text-danger">
+              No se pueden repetir los valores 😡
+            </span>
+          )}
+          {errors[label]?.type === "valorInvalido" && (
+            <span className="text-danger">{errors[label]?.message}</span>
           )}
         </div>
       ))}

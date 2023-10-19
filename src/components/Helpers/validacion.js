@@ -170,6 +170,7 @@ export const validate = {
 
 export const requerido = ["edad", "sexo", "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10", "p11", "p12", "p13", "p14", "p15", "p16", "p17_o"]
 
+
 export const valOtro = {
     p4: "3",
     p5: "4",
@@ -179,7 +180,7 @@ export const valOtro = {
     p14: "4"
 }
 
-export const multiples = ["p7", "p12"]
+export const multiples = ["p7", "p12", "p11"]
 
 export const seRepite = (numeros) => {
     const string = numeros.toString()
@@ -188,7 +189,6 @@ export const seRepite = (numeros) => {
     let control = false
 
     array.forEach(element => {
-        console.log(array2.includes(element));
         if (array2.includes(element)) {
             return control = true
         }
@@ -197,3 +197,42 @@ export const seRepite = (numeros) => {
 
     return control
 }
+
+export const noIncluye = (pregunta, valor) => {
+    const valores = {
+        sexo: ['1', '2'],
+        p1: ['1', '2'],
+        p2: ['1', '2', '3'],
+        p3: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+        p4: ['1', '2', '3'],
+        p5: ['1', '2', '3', '4'],
+        p6: ['1', '2', '3', '4', '5'],
+        p7: ['1', '2', '3', '4'],
+        p8: ['1', '2', '3'],
+        p9: ['1', '2', '3'],
+        p10: ['1', '2', '3', '4', '5', '6', '7', '8'],
+        p11: ['1', '2', '3', '4', '5'],
+        p12: ['1', '2', '3', '4', '5'],
+        p13: ['1', '2', '3', '4', '5'],
+        p14: ['1', '2', '3', '4'],
+        p15: ['1', '2', '3', '4'],
+        p16: ['1', '2', '3'],
+    };
+
+    const valorString = valor.toString();
+
+    if (pregunta !== "p13") {
+        const valorArray = valorString.split("");
+        for (const element of valorArray) {
+            if (!valores[pregunta].includes(element)) {
+                return true;
+            }
+        }
+    } else {
+        if (!valores[pregunta].includes(valorString)) {
+            return true;
+        }
+    }
+
+    return false;
+};
