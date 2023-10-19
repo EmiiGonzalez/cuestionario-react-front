@@ -6,7 +6,7 @@ import './App.css';
 import 'alertifyjs/build/css/alertify.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 function App() {
-  const URL = "http://localhost:3000/";
+  const URL = "http://proyecto-practicas.ddns.net:3030/";
 
   return (
     <>
