@@ -10,6 +10,7 @@ import {
   seRepite,
   noIncluye,
 } from "./Helpers/validacion.js";
+import { fieldNames } from "./Helpers/fieldnames.js";
 import alertify from "alertifyjs";
 
 export const NewRecord = ({ url }) => {
@@ -53,6 +54,7 @@ export const NewRecord = ({ url }) => {
     p11_o: false,
     p12_o: false,
     p14_o: false,
+    p17_o: true,
   });
   //fin hooks
 
@@ -64,36 +66,6 @@ export const NewRecord = ({ url }) => {
   } = useForm();
 
   const navigate = useNavigate();
-
-  const fieldNames = [
-    { label: "edad", type: "number" },
-    { label: "sexo", type: "number" },
-    { label: "p1", type: "number" },
-    { label: "p2", type: "number" },
-    { label: "p3", type: "number" },
-    { label: "p4", type: "number" },
-    { label: "p5", type: "number" },
-    { label: "p6", type: "number" },
-    { label: "p7", type: "number" },
-    { label: "p8", type: "number" },
-    { label: "p9", type: "number" },
-    { label: "p10", type: "number" },
-    { label: "p11", type: "number" },
-    { label: "p12", type: "number" },
-    { label: "p13", type: "number" },
-    { label: "p14", type: "number" },
-    { label: "p15", type: "number" },
-    { label: "p16", type: "number" },
-    { label: "p17", type: "number" },
-    { label: "p17_o", type: "text" },
-    { label: "p4_o", type: "text" },
-    { label: "p5_o", type: "text" },
-    { label: "p6_o", type: "text" },
-    { label: "p7_o", type: "text" },
-    { label: "p11_o", type: "text" },
-    { label: "p12_o", type: "text" },
-    { label: "p14_o", type: "text" },
-  ];
 
   const saveRecord = async (e) => {
     const conError = [];
@@ -124,7 +96,7 @@ export const NewRecord = ({ url }) => {
                 e
               );
               alertify.success("Se Actualizaron los Cambios");
-              navigate("/");
+              navigate("/admin");
             } catch (error) {
               alertify.alert("Error ❗", "No se pudo Actualizar los Cambios");
             }
@@ -161,7 +133,10 @@ export const NewRecord = ({ url }) => {
   return (
     <form
       className="form w-75 px-5 mx-auto mb-5 mt-2 bg-light border rounded"
-      onSubmit={handleSubmit(saveRecord)}
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleSubmit(saveRecord)(e);
+      }}
     >
       <h1 className="text-center mb-3 fw-bold">Editar Registro</h1>
       {fieldNames.map(({ label, type }) => (

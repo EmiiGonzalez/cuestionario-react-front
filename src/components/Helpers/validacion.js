@@ -95,7 +95,7 @@ export const validate = {
         minLength: 1,
         maxLength: 5,
         min: 1,
-        max: 54321
+        max: 65432
     },
     p13 : {
         required: true,
@@ -134,9 +134,7 @@ export const validate = {
     p17_o : {
         requerido: true,
         minLength: 4,
-        maxLength: 180,
-        min: 4,
-        max: 180
+        maxLength: 180
     },
     p4_o : {
         minLength: 4,
@@ -168,7 +166,7 @@ export const validate = {
     }
 }
 
-export const requerido = ["edad", "sexo", "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10", "p11", "p12", "p13", "p14", "p15", "p16", "p17_o"]
+export const requerido = ["edad", "sexo", "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10", "p11", "p12", "p13", "p14", "p15", "p16"]
 
 
 export const valOtro = {
@@ -176,7 +174,7 @@ export const valOtro = {
     p5: "4",
     p6: "5",
     p11: "5",
-    p12: "5",
+    p12: "6",
     p14: "4"
 }
 
@@ -210,9 +208,9 @@ export const noIncluye = (pregunta, valor) => {
         p7: ['1', '2', '3', '4'],
         p8: ['1', '2', '3'],
         p9: ['1', '2', '3'],
-        p10: ['1', '2', '3', '4', '5', '6', '7', '8'],
+        p10: ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
         p11: ['1', '2', '3', '4', '5'],
-        p12: ['1', '2', '3', '4', '5'],
+        p12: ['1', '2', '3', '4', '5', '6'],
         p13: ['1', '2', '3', '4', '5'],
         p14: ['1', '2', '3', '4'],
         p15: ['1', '2', '3', '4'],
@@ -221,7 +219,7 @@ export const noIncluye = (pregunta, valor) => {
 
     const valorString = valor.toString();
 
-    if (pregunta !== "p13") {
+    if (pregunta !== "p3") {
         const valorArray = valorString.split("");
         for (const element of valorArray) {
             if (!valores[pregunta].includes(element)) {

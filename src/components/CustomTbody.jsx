@@ -54,7 +54,7 @@ export const CustomTbody = ({rows, getRecords, url}) => {
           <td>{row.p14}</td>
           <td>{row.p15}</td>
           <td>{row.p16}</td>
-          <td><Link to={`/rFormWeb/edit/${row.cuestn}`} className="btn btn-primary m-0 p-0 w-100">Editar</Link></td>
+          <td><Link to={`/admin/editar/${row.cuestn}`} className="btn btn-primary m-0 p-0 w-100">Editar</Link></td>
           <td><button onClick={() => deleteRecord(row.cuestn)} className="btn btn-danger m-0 p-0 w-100">Eliminar</button></td>
         </tr>
       ))}

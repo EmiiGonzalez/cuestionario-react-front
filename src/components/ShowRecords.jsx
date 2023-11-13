@@ -18,7 +18,7 @@ export const ShowRecords = ({ url }) => {
 
   return (
     <>
-    <Link to="/rFormWeb/create"><button className="btn btn-success">Agregar</button></Link>
+    <Link to="/admin/crear"><button className="btn btn-success">Agregar</button></Link>
     <div className="table-responsive">
       <table className="table table-striped table-sm">
         <CustomThead />
